@@ -340,7 +340,7 @@ def send_now(users, label, extra_context=None, on_site=True, sender=None, attach
         body_html = render_to_string("notification/email_body.html", {
             "message": messages["full.html"],
         }, context)
-        if not attach:
+        if attach is None:
             attach = user
         notice = Notice.objects.create(recipient=user, message=messages["notice.html"],
                                        notice_type=notice_type, on_site=on_site, sender=sender, attach=attach)
