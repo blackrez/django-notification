@@ -150,9 +150,9 @@ class Notice(models.Model):
     archived = models.BooleanField(_("archived"), default=False)
     on_site = models.BooleanField(_("on site"))
     object_id = models.PositiveIntegerField()
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
     attach = generic.GenericForeignKey("content_type", "object_id")
-
+    #attach = models.ForeignKey(ContentType, null=True, blank=True)
     objects = NoticeManager()
 
     def __unicode__(self):
@@ -340,7 +340,8 @@ def send_now(users, label, extra_context=None, on_site=True, sender=None, attach
         body_html = render_to_string("notification/email_body.html", {
             "message": messages["full.html"],
         }, context)
-
+        if not attach:
+            attach = user
         notice = Notice.objects.create(recipient=user, message=messages["notice.html"],
                                        notice_type=notice_type, on_site=on_site, sender=sender, attach=attach)
         if should_send(user, notice_type, "1") and user.email and user.is_active: # Email
